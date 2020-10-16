@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _submitButton() {
     return InkWell(
       onTap: () {
-        verifie("Jawhera@yahoo.fr", "xxxxxx");
+        loginUser("Jawhera@yahoo.fr", "xxxxxx").then((value) => print(value));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -285,7 +285,7 @@ class _LoginPageState extends State<LoginPage> {
     ));
   }
 
-  Future<User> verifie(username, password) async {
+  /*Future<User> verifie(username, password) async {
     print(username);
     final http.Response response = await http.post(
       'http://192.168.46.1:5000/api/login',
@@ -308,6 +308,21 @@ class _LoginPageState extends State<LoginPage> {
       // then throw an exception.
       throw Exception('Failed to load album');
     }
+  }*/
+
+  static Future<String> loginUser(username, password) async {
+    print("hello");
+    String requestUrl = "http://192.168.43.30:5000/api/login";
+    Map<String, String> headers = {"Content-type": "application/json"};
+    http.Response response = await http.post(
+      requestUrl,
+      headers: headers,
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'password': password,
+      }),
+    );
+    return response.body;
   }
 }
 
