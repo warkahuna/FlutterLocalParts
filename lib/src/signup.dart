@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_login_signup/src/Widget/bezierContainer.dart';
 import 'package:flutter_login_signup/src/loginPage.dart';
@@ -13,6 +15,13 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  TextEditingController emailController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
+  TextEditingController firstNameController = new TextEditingController();
+  TextEditingController lastNameController = new TextEditingController();
+  TextEditingController mobilePhoneController = new TextEditingController();
+  TextEditingController adressController = new TextEditingController();
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -34,7 +43,8 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
+  Widget _entryField(String title, TextEditingController controller,
+      {bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -48,6 +58,7 @@ class _SignUpPageState extends State<SignUpPage> {
             height: 10,
           ),
           TextField(
+              controller: controller,
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
@@ -59,28 +70,40 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _submitButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(vertical: 15),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2)
-          ],
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xff9ba1a6), Color(0xff3B3F42)])),
-      child: Text(
-        'Register Now',
-        style: TextStyle(fontSize: 20, color: Colors.white),
-      ),
-    );
+    return InkWell(
+        onTap: () {
+          print("register");
+          registerUser(
+                  emailController.text,
+                  passwordController.text,
+                  mobilePhoneController.text,
+                  firstNameController.text,
+                  lastNameController.text,
+                  adressController.text)
+              .then((value) => verifieAndRegister(value));
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          padding: EdgeInsets.symmetric(vertical: 15),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                    color: Colors.grey.shade200,
+                    offset: Offset(2, 4),
+                    blurRadius: 5,
+                    spreadRadius: 2)
+              ],
+              gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Color(0xff9ba1a6), Color(0xff3B3F42)])),
+          child: Text(
+            'Register Now',
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ));
   }
 
   Widget _loginAccountLabel() {
@@ -147,9 +170,12 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Username"),
-        _entryField("Email id"),
-        _entryField("Password", isPassword: true),
+        _entryField("First Name", firstNameController),
+        _entryField("Last Name", lastNameController),
+        _entryField("Mobile Phone", mobilePhoneController),
+        _entryField("Adress", adressController),
+        _entryField("Email", emailController),
+        _entryField("Password", passwordController, isPassword: true),
       ],
     );
   }
@@ -195,5 +221,29 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  static Future<String> registerUser(
+      email, password, mobile, firstName, lastName, adress) async {
+    print("register");
+    String requestUrl = "http://192.168.1.5:5000/api/register";
+    Map<String, String> headers = {"Content-type": "application/json"};
+    http.Response response = await http.post(
+      requestUrl,
+      headers: headers,
+      body: jsonEncode(<String, String>{
+        'username': email,
+        'password': password,
+        'address': adress,
+        'firstname': firstName,
+        'mobile': mobile,
+        'lastname': lastName
+      }),
+    );
+    return response.body;
+  }
+
+  void verifieAndRegister(value) {
+    print(value);
   }
 }
