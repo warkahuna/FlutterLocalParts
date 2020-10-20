@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'Homepage/home_page.dart';
 import 'Widget/bezierContainer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -335,9 +336,10 @@ class _LoginPageState extends State<LoginPage> {
     print(value);
     if (jsonDecode(value)['message'] == "JSON Data received successfully") {
       print("welcome");
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
     }
   }
+
 }
 
 class User {
