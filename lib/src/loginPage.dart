@@ -17,6 +17,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -38,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
+  Widget _entryField(String title, TextEditingController controller,
+      {bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 5),
       child: Column(
@@ -52,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextField(
+              controller: controller,
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
@@ -65,7 +70,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _submitButton() {
     return InkWell(
       onTap: () {
-        loginUser("Jawhera@yahoo.fr", "xxxxxx").then((value) => print(value));
+        loginUser(emailController.text, passwordController.text)
+            .then((value) => verifieAndGoHome(value));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -233,8 +239,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Email id"),
-        _entryField("Password", isPassword: true),
+        _entryField("Email id", emailController),
+        _entryField("Password", passwordController, isPassword: true),
       ],
     );
   }
@@ -311,8 +317,8 @@ class _LoginPageState extends State<LoginPage> {
   }*/
 
   static Future<String> loginUser(username, password) async {
-    print("hello");
-    String requestUrl = "http://192.168.43.30:5000/api/login";
+    print("login");
+    String requestUrl = "http://192.168.1.5:5000/api/login";
     Map<String, String> headers = {"Content-type": "application/json"};
     http.Response response = await http.post(
       requestUrl,
@@ -323,6 +329,14 @@ class _LoginPageState extends State<LoginPage> {
       }),
     );
     return response.body;
+  }
+
+  void verifieAndGoHome(value) {
+    print(value);
+    if (jsonDecode(value)['message'] == "JSON Data received successfully") {
+      print("welcome");
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    }
   }
 }
 
@@ -339,8 +353,3 @@ class User {
     );
   }
 }
-
-/*{
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Home()));
-        }*/
