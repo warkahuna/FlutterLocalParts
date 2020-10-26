@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login_signup/src/home.dart';
 import 'package:flutter_login_signup/src/signup.dart';
+import 'package:flutter_login_signup/src/userProfile/page1/page1.dart';
+import 'package:flutter_login_signup/src/userProfile/page2/page2.dart';
+import 'package:flutter_login_signup/src/userProfile/page3/page3.dart';
+import 'package:flutter_login_signup/src/userProfile/page3/profile_item.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'Homepage/home_page.dart';
+import 'Homepage/custom_navigation_bar.dart';
 import 'Widget/bezierContainer.dart';
+import 'filter/filterlist.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -73,6 +78,8 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () {
         loginUser(emailController.text, passwordController.text)
             .then((value) => verifieAndGoHome(value));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MyAppFilter()));
+
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -336,8 +343,8 @@ class _LoginPageState extends State<LoginPage> {
     print(value);
     if (jsonDecode(value)['message'] == "JSON Data received successfully") {
       print("welcome");
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
     }
+
   }
 
 }
