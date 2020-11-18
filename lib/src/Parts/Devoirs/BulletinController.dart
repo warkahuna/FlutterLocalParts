@@ -8,9 +8,8 @@ import 'package:http/http.dart' as http;
      final response =
      await http.get('http://10.0.2.2:5000/api/parts/getSells');
      print(response.body);
-     if (response.statusCode == 200) {
+     if (response.statusCode == 201) {
        List<dynamic> data = json.decode(response.body);
-      print("data length is "+data.length.toString());
        return data  ;
      } else {
        throw Exception('Failed to load');
