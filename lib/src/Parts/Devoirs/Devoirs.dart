@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import '../../Part.dart';
 import 'BulletinController.dart';
 import 'components/light_colors.dart';
 import 'components/top_container.dart';
@@ -17,15 +18,22 @@ class DevoirsPage extends StatefulWidget {
 
 class _DevoirsPageState extends State<DevoirsPage> {
 
-  List<String> data = new List<String>();
+  List<Part> PartsData = new List<Part>();
   bool isLoading = true;
 
   void asyncInitState() async {
     BulletinController bulletinController = BulletinController() ;
     List<dynamic>value = await bulletinController.FetchBulletin();
     print('value length : '+value.length.toString());
+    int i = 0 ;
     value.forEach((dynamic entry) {
-      print(value[0]['sellable_date']);
+    Part p = new Part();
+    p.name = value[i]["sellable_date"];
+   // p.idparts = value[i]["sellable_date"];
+    p.tag_description = value[i]["sellable_date"];
+    p.Type =  value[i]["sellable_date"];
+    PartsData.add(p);
+    i++;
     });
     setState(() {
       isLoading = false;
@@ -37,6 +45,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
     super.initState();
     asyncInitState();
     super.initState();
+    print("Parts data final length is "+PartsData.length.toString());
   }
 
   final EmailController = TextEditingController();
@@ -137,9 +146,9 @@ class _DevoirsPageState extends State<DevoirsPage> {
                 isLoading ?Center(child: CircularProgressIndicator()) :
                 Expanded(
                     child: ListView.builder(
-                        itemCount:this.data.length ,
+                        itemCount:this.PartsData.length ,
                         itemBuilder: (context, index) {
-                          return _specialistsCardInfo(data[index]) ;
+                          return _specialistsCardInfo(this.PartsData[index]) ;
                         }
                     )
                 )
@@ -154,7 +163,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
       ),
     );
   }
-  Widget _specialistsCardInfo(String data) {
+  Widget _specialistsCardInfo(Part data) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
       margin: EdgeInsets.only(
@@ -178,11 +187,11 @@ class _DevoirsPageState extends State<DevoirsPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-      /*        CircleAvatar(
+             CircleAvatar(
                 backgroundColor: Color(0xFFD9D9D9),
-       //         backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTery_TX9LaD2_PDXZHtpuZXkvlkVAREwkC_w&usqp=CAU'),
+              backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTery_TX9LaD2_PDXZHtpuZXkvlkVAREwkC_w&usqp=CAU'),
                 radius: 36.0,
-              )*/
+              ),
               SizedBox(
                 width: 10.0,
               ),
@@ -192,7 +201,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                 children: <Widget>[
                   RichText(
                     text: TextSpan(
-                      text: data+'\n',
+                      text: data.name+'\n',
                       style: TextStyle(
                         color: Colors.blueAccent,
                         fontSize: 20,
