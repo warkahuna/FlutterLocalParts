@@ -22,14 +22,10 @@ class _DevoirsPageState extends State<DevoirsPage> {
 
   void asyncInitState() async {
     BulletinController bulletinController = BulletinController() ;
-    Map<String, dynamic> value = await bulletinController.FetchBulletin();
+    List<dynamic>value = await bulletinController.FetchBulletin();
     print('value length : '+value.length.toString());
-    value.forEach((String key, dynamic entry) {
-      print("title :");
-      print(value['title']);
-      print("id :");
-      print(value['id']);
-      this.data.add(value['title']);
+    value.forEach((dynamic entry) {
+      print(value[0]['sellable_date']);
     });
     setState(() {
       isLoading = false;
