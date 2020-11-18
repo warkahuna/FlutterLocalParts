@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'Homepage/custom_navigation_bar.dart';
+import 'Parts/MenuPrincipe.dart';
 import 'Widget/bezierContainer.dart';
 import 'filter/filterlist.dart';
 
@@ -78,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () {
         loginUser(emailController.text, passwordController.text)
             .then((value) => verifieAndGoHome(value));
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MyAppFilter()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MenuPrincipe()));
 
       },
       child: Container(
