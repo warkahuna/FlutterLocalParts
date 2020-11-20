@@ -37,12 +37,12 @@ class PItem extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
-          color: Color(0xfff92a57),
+          color: Color(0xff9ba1a6),
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: EdgeInsets.all(0.0),
           onPressed: () {},
           child: Text(
-            "Follow",
+            "Edit",
             style: TextStyle(
               color: Colors.white,
             ),

@@ -13,10 +13,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-         primarySwatch: Colors.blue,
-         textTheme:GoogleFonts.latoTextTheme(textTheme).copyWith(
-           bodyText1: GoogleFonts.montserrat(textStyle: textTheme.bodyText1),
-         ),
+        primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
+          bodyText1: GoogleFonts.montserrat(textStyle: textTheme.bodyText1),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       home: WelcomePage(),

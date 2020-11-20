@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/src/filter/filterlist.dart';
 
 class Header extends StatelessWidget {
   const Header({
@@ -26,10 +27,13 @@ class Header extends StatelessWidget {
               children: <Widget>[
                 IconButton(
                   icon: Icon(
-                    Icons.menu,
+                    Icons.home,
                     color: Colors.white,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MyAppFilter()));
+                  },
                 ),
                 Text(
                   "Profile",

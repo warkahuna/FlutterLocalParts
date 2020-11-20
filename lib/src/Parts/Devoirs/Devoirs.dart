@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/src/Homepage/custom_navigation_bar.dart';
+import 'package:flutter_login_signup/src/navBar.dart';
+import 'package:flutter_login_signup/src/userProfile/page2/page2.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../Part.dart';
 import 'BulletinController.dart';
@@ -8,8 +11,17 @@ import 'components/top_container.dart';
 
 import 'components/utisl.dart';
 
-class DevoirsPage extends StatefulWidget {
+enum ThemeStyle {
+  Dribbble,
+  Light,
+  NoElevation,
+  AntDesign,
+  BorderRadius,
+  FloatingBar,
+  NotificationBadge
+}
 
+class DevoirsPage extends StatefulWidget {
   DevoirsPage({Key key}) : super(key: key);
 
   @override
@@ -17,23 +29,29 @@ class DevoirsPage extends StatefulWidget {
 }
 
 class _DevoirsPageState extends State<DevoirsPage> {
+  int _currentIndex = 0;
+  ThemeStyle _currentStyle = ThemeStyle.NotificationBadge;
+
+  List<int> _badgeCounts = List<int>.generate(5, (index) => index);
+
+  List<bool> _badgeShows = List<bool>.generate(5, (index) => true);
 
   List<Part> PartsData = new List<Part>();
   bool isLoading = true;
 
   void asyncInitState() async {
-    BulletinController bulletinController = BulletinController() ;
-    List<dynamic>value = await bulletinController.FetchBulletin();
-    print('value length : '+value.length.toString());
-    int i = 0 ;
+    BulletinController bulletinController = BulletinController();
+    List<dynamic> value = await bulletinController.FetchBulletin();
+    print('value length : ' + value.length.toString());
+    int i = 0;
     value.forEach((dynamic entry) {
-    Part p = new Part();
-    p.name = value[i]["sellable_date"];
-   // p.idparts = value[i]["sellable_date"];
-    p.tag_description = value[i]["sellable_date"];
-    p.Type =  value[i]["sellable_date"];
-    PartsData.add(p);
-    i++;
+      Part p = new Part();
+      p.name = value[i]["sellable_date"];
+      // p.idparts = value[i]["sellable_date"];
+      p.tag_description = value[i]["sellable_date"];
+      p.Type = value[i]["sellable_date"];
+      PartsData.add(p);
+      i++;
     });
     setState(() {
       isLoading = false;
@@ -45,13 +63,12 @@ class _DevoirsPageState extends State<DevoirsPage> {
     super.initState();
     asyncInitState();
     super.initState();
-    print("Parts data final length is "+PartsData.length.toString());
+    print("Parts data final length is " + PartsData.length.toString());
   }
 
   final EmailController = TextEditingController();
   final PasswordController = TextEditingController();
-  BulletinController bulletincontroller = new BulletinController() ;
-
+  BulletinController bulletincontroller = new BulletinController();
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +115,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                             center: CircleAvatar(
                               backgroundColor: LightColors.kBlue,
                               radius: 35.0,
-                           /*   backgroundImage: AssetImage(
+                              /*   backgroundImage: AssetImage(
                                 'assets/images/avatar.png',
                               ),*/
                             ),
@@ -142,27 +159,74 @@ class _DevoirsPageState extends State<DevoirsPage> {
               height: 10.0,
             ),
             Expanded(
-                child:
-                isLoading ?Center(child: CircularProgressIndicator()) :
-                Expanded(
-                    child: ListView.builder(
-                        itemCount:this.PartsData.length ,
-                        itemBuilder: (context, index) {
-                          return _specialistsCardInfo(this.PartsData[index]) ;
-                        }
-                    )
-                )
-
-            ),
+                child: isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : Expanded(
+                        child: ListView.builder(
+                            itemCount: this.PartsData.length,
+                            itemBuilder: (context, index) {
+                              return _specialistsCardInfo(
+                                  this.PartsData[index]);
+                            }))),
             SizedBox(
               width: 50.0,
               height: 30.0,
             ),
+            _buildOriginDesign(),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildOriginDesign() {
+    return CustomNavigationBar(
+      iconSize: 30.0,
+      selectedColor: Colors.white,
+      strokeColor: Colors.white,
+      unSelectedColor: Color(0xff6c788a),
+      backgroundColor: Color(0xff040307),
+      items: [
+        CustomNavigationBarItem(
+          icon: Icons.home,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.shopping_cart,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.lightbulb_outline,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.search,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.account_circle,
+        ),
+      ],
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            break;
+          case 1:
+            break;
+          case 2:
+            break;
+          case 3:
+            break;
+          case 4:
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Page2()));
+            break;
+          default:
+        }
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+    );
+  }
+
   Widget _specialistsCardInfo(Part data) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
@@ -187,9 +251,10 @@ class _DevoirsPageState extends State<DevoirsPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-             CircleAvatar(
+              CircleAvatar(
                 backgroundColor: Color(0xFFD9D9D9),
-              backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTery_TX9LaD2_PDXZHtpuZXkvlkVAREwkC_w&usqp=CAU'),
+                backgroundImage: NetworkImage(
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTery_TX9LaD2_PDXZHtpuZXkvlkVAREwkC_w&usqp=CAU'),
                 radius: 36.0,
               ),
               SizedBox(
@@ -201,7 +266,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                 children: <Widget>[
                   RichText(
                     text: TextSpan(
-                      text: data.name+'\n',
+                      text: data.name + '\n',
                       style: TextStyle(
                         color: Colors.blueAccent,
                         fontSize: 20,
@@ -246,7 +311,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                     padding: const EdgeInsets.all(0.0),
                     child: Ink(
                       decoration: const BoxDecoration(
-                        gradient: purpleGradient ,
+                        gradient: purpleGradient,
                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                       ),
                       child: Container(
@@ -270,13 +335,11 @@ class _DevoirsPageState extends State<DevoirsPage> {
           ),
           Icon(
             Icons.book,
-            color: Colors.blueAccent ,
+            color: Colors.blueAccent,
             size: 36,
           ),
         ],
       ),
     );
   }
-
-
 }
