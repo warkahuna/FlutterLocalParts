@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../Part.dart';
@@ -28,10 +31,12 @@ class _DevoirsPageState extends State<DevoirsPage> {
     int i = 0 ;
     value.forEach((dynamic entry) {
     Part p = new Part();
-    p.name = value[i]["sellable_date"];
-   // p.idparts = value[i]["sellable_date"];
-    p.tag_description = value[i]["sellable_date"];
-    p.Type =  value[i]["sellable_date"];
+    p.name = value[i]["name"];
+    p.idparts = value[i]["idparts"];
+    p.Final_Price = value[i]["Final_Price"];
+    p.tag_description = value[i]["tag_description"];
+    p.Type =  value[i]["Type"];
+    p.String_image = value[i]["String_image"];
     PartsData.add(p);
     i++;
     });
@@ -51,6 +56,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
   final EmailController = TextEditingController();
   final PasswordController = TextEditingController();
   BulletinController bulletincontroller = new BulletinController() ;
+  TextStyle linkStyle = TextStyle(color: Colors.blue);
 
 
   @override
@@ -137,10 +143,13 @@ class _DevoirsPageState extends State<DevoirsPage> {
                     )
                   ]),
             ),
-            SizedBox(
-              width: 50.0,
-              height: 10.0,
-            ),
+          getCategoryUI()
+          ,
+          SizedBox(
+
+            width: 50.0,
+            height: 10.0,
+          ),
             Expanded(
                 child:
                 isLoading ?Center(child: CircularProgressIndicator()) :
@@ -187,11 +196,9 @@ class _DevoirsPageState extends State<DevoirsPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-             CircleAvatar(
-                backgroundColor: Color(0xFFD9D9D9),
-              backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTery_TX9LaD2_PDXZHtpuZXkvlkVAREwkC_w&usqp=CAU'),
-                radius: 36.0,
-              ),
+              Image.memory(base64Decode(data.String_image),
+                height: 100, width: 100, fit: BoxFit.fitWidth )
+              ,
               SizedBox(
                 width: 10.0,
               ),
@@ -210,7 +217,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                       ),
                       children: <TextSpan>[
                         TextSpan(
-                          text: 'a rendre avant 04/09/2020',
+                          text: data.Final_Price,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
@@ -218,7 +225,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                           ),
                         ),
                         TextSpan(
-                          text: '\nPoplar Pharma Limited',
+                          text: data.tag_description,
                           style: TextStyle(
                             color: Colors.black45,
                             fontWeight: FontWeight.w400,
@@ -226,7 +233,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                           ),
                         ),
                         TextSpan(
-                          text: '\nDetails \nAbout the devoirs | 5 min',
+                          text: data.Type,
                           style: TextStyle(
                             color: Colors.black38,
                             fontWeight: FontWeight.w400,
@@ -240,7 +247,9 @@ class _DevoirsPageState extends State<DevoirsPage> {
                     height: 6.0,
                   ),
                   RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => DetailScreen(todo: data)));
+                    },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(80.0)),
                     padding: const EdgeInsets.all(0.0),
@@ -255,7 +264,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                             minHeight: 36.0), // min sizes for Material buttons
                         alignment: Alignment.center,
                         child: const Text(
-                          'Me Rappeler',
+                          'Consulter',
                           style: TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 13,
@@ -269,7 +278,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
             ],
           ),
           Icon(
-            Icons.book,
+            Icons.settings,
             color: Colors.blueAccent ,
             size: 36,
           ),
@@ -277,6 +286,106 @@ class _DevoirsPageState extends State<DevoirsPage> {
       ),
     );
   }
+  Widget getCategoryUI() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const SizedBox(
+          height: 16,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          child: Row(
+            children: <Widget>[
+              const SizedBox(
+                width: 50,
+              ),
+              RichText(
+                text: TextSpan(
+                  style: TextStyle(fontSize: 15) ,
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'Prix',
+                        style: linkStyle,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            print('Jour click action');
+                          })
+                  ],
+                ),
+              )
+              ,
+              const SizedBox(
+                width: 40,
+              ),
+              RichText(
+                text: TextSpan(
+                  style: TextStyle(fontSize: 15) ,
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'Récent',
+                        style: linkStyle,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            print('Jour click action');
+                          })
+                  ],
+                ),
+              ),
 
+              const SizedBox(
+                width: 40,
+              ),
+
+              RichText(
+                text: TextSpan(
+                  style: TextStyle(fontSize: 15) ,
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'Populaire',
+                        style: linkStyle,
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            print('Jour click action');
+                          })
+                  ],
+                ),
+              ),
+
+              const SizedBox(
+                width: 40,
+              )
+
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+//Get Category
+
+
+}
+
+/////////////
+
+class DetailScreen extends StatelessWidget {
+  // Declare a field that holds the Todo.
+  final Part todo;
+
+  // In the constructor, require a Todo.
+  DetailScreen({Key key, @required this.todo}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Text Over Image'),
+      ),
+      body:        Image.memory(base64Decode(todo.String_image),
+          height: 300, width: 300, fit: BoxFit.fitHeight )
+    );
+  }
 
 }

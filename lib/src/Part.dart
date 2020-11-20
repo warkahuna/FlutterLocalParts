@@ -4,4 +4,5 @@ class Part{
   String Type;
   String tag_description ;
   String Final_Price ;
+  String String_image ;
 }
