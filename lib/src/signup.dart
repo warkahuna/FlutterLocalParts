@@ -226,7 +226,7 @@ class _SignUpPageState extends State<SignUpPage> {
   static Future<String> registerUser(
       email, password, mobile, firstName, lastName, adress) async {
     print("register");
-    String requestUrl = "http://192.168.1.5:5000/api/register";
+    String requestUrl = "http://192.168.43.30:5000/api/register";
     Map<String, String> headers = {"Content-type": "application/json"};
     http.Response response = await http.post(
       requestUrl,
@@ -245,5 +245,37 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void verifieAndRegister(value) {
     print(value);
+    if (jsonDecode(value)['error'] == "error ocurred") {
+      _ackAlert(context, 'error occured please verifie your data');
+    } else if (jsonDecode(value)['err'] == 'username already exist ') {
+      _ackAlert(context, 'username already exist ');
+    } else if (jsonDecode(value)['success'] == 'user registered sucessfully') {
+      _ackAlert(context, 'registration successful you may login');
+    }
+  }
+
+  Future _ackAlert(BuildContext context, String text) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Registration'),
+          content: new Text(text),
+          actions: [
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () {
+                if (text == 'registration successful you may login') {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginPage()));
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

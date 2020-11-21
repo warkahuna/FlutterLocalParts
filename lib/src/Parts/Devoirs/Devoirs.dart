@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_signup/src/Homepage/custom_navigation_bar.dart';
+import 'package:flutter_login_signup/src/navBar.dart';
+import 'package:flutter_login_signup/src/userProfile/page2/page2.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../Part.dart';
 import 'BulletinController.dart';
@@ -11,8 +14,17 @@ import 'components/top_container.dart';
 
 import 'components/utisl.dart';
 
-class DevoirsPage extends StatefulWidget {
+enum ThemeStyle {
+  Dribbble,
+  Light,
+  NoElevation,
+  AntDesign,
+  BorderRadius,
+  FloatingBar,
+  NotificationBadge
+}
 
+class DevoirsPage extends StatefulWidget {
   DevoirsPage({Key key}) : super(key: key);
 
   @override
@@ -20,41 +32,92 @@ class DevoirsPage extends StatefulWidget {
 }
 
 class _DevoirsPageState extends State<DevoirsPage> {
+  int _currentIndex = 0;
+  ThemeStyle _currentStyle = ThemeStyle.NotificationBadge;
+
+  List<int> _badgeCounts = List<int>.generate(5, (index) => index);
+
+  List<bool> _badgeShows = List<bool>.generate(5, (index) => true);
 
   List<Part> PartsData = new List<Part>();
   bool isLoading = true;
 
   void asyncInitState() async {
-    BulletinController bulletinController = BulletinController() ;
-    List<dynamic>value = await bulletinController.FetchBulletin();
-    print('value length : '+value.length.toString());
-    int i = 0 ;
+    BulletinController bulletinController = BulletinController();
+    List<dynamic> value = await bulletinController.FetchBulletin();
+    print('value length : ' + value.length.toString());
+    int i = 0;
     value.forEach((dynamic entry) {
+
     Part p = new Part();
     p.name = value[i]["name"];
     p.idparts = value[i]["idparts"];
     p.Final_Price = value[i]["Final_Price"];
     p.tag_description = value[i]["tag_description"];
     p.Type =  value[i]["Type"];
-    p.String_image = value[i]["String_image"];
+     p.String_image = value[i]["String_image"];
     PartsData.add(p);
     i++;
+
     });
     setState(() {
       isLoading = false;
     });
   }
 
+  void TestInitState() async {
+    BulletinController bulletinController = BulletinController();
+    List<dynamic> value = await bulletinController.sort();
+    print('value length : ' + value.length.toString());
+    int i = 0;
+    this.PartsData.clear();
+    value.forEach((dynamic entry) {
+
+      Part p = new Part();
+      p.name = value[i]["name"];
+      p.idparts = value[i]["idparts"];
+      p.Final_Price = value[i]["Final_Price"];
+      p.tag_description = value[i]["tag_description"];
+      p.Type =  value[i]["Type"];
+      p.String_image = value[i]["String_image"];
+      PartsData.add(p);
+      i++;
+
+    });
+
+  }
+  void vuesInitState() async {
+    BulletinController bulletinController = BulletinController();
+    List<dynamic> value = await bulletinController.sortvues();
+    print('value length : ' + value.length.toString());
+    int i = 0;
+    this.PartsData.clear();
+    value.forEach((dynamic entry) {
+
+      Part p = new Part();
+      p.name = value[i]["name"];
+      p.idparts = value[i]["idparts"];
+      p.Final_Price = value[i]["Final_Price"];
+      p.tag_description = value[i]["tag_description"];
+      p.Type =  value[i]["Type"];
+      p.String_image = value[i]["String_image"];
+      PartsData.add(p);
+      i++;
+
+    });
+
+  }
   @override
   void initState() {
     super.initState();
     asyncInitState();
     super.initState();
-    print("Parts data final length is "+PartsData.length.toString());
+    print("Parts data final length is " + PartsData.length.toString());
   }
 
   final EmailController = TextEditingController();
   final PasswordController = TextEditingController();
+
   BulletinController bulletincontroller = new BulletinController() ;
   TextStyle linkStyle = TextStyle(color: Colors.blue);
 
@@ -104,9 +167,9 @@ class _DevoirsPageState extends State<DevoirsPage> {
                             center: CircleAvatar(
                               backgroundColor: LightColors.kBlue,
                               radius: 35.0,
-                           /*   backgroundImage: AssetImage(
-                                'assets/images/avatar.png',
-                              ),*/
+                                backgroundImage: NetworkImage(
+                                'https://i.dlpng.com/static/png/5327106-businessman-icon-png-263229-free-icons-library-businessman-icon-png-512_512_preview.png',
+                              )
                             ),
                           ),
                           Column(
@@ -114,7 +177,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                             children: <Widget>[
                               Container(
                                 child: Text(
-                                  'Devoirs',
+                                    'Choisir vos piéces !',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontSize: 22.0,
@@ -124,18 +187,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                                   ),
                                 ),
                               ),
-                              Container(
-                                child: Text(
-                                  'Nom Parent',
-                                  textAlign: TextAlign.start,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.white,
-                                    fontFamily: "Dosis",
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
+
                             ],
                           )
                         ],
@@ -146,32 +198,78 @@ class _DevoirsPageState extends State<DevoirsPage> {
           getCategoryUI()
           ,
           SizedBox(
-
             width: 50.0,
             height: 10.0,
           ),
             Expanded(
-                child:
-                isLoading ?Center(child: CircularProgressIndicator()) :
-                Expanded(
-                    child: ListView.builder(
-                        itemCount:this.PartsData.length ,
-                        itemBuilder: (context, index) {
-                          return _specialistsCardInfo(this.PartsData[index]) ;
-                        }
-                    )
-                )
-
-            ),
+                child: isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : Expanded(
+                        child: ListView.builder(
+                            itemCount: this.PartsData.length,
+                            itemBuilder: (context, index) {
+                              return _specialistsCardInfo(
+                                  this.PartsData[index]);
+                            }))),
             SizedBox(
               width: 50.0,
               height: 30.0,
             ),
+       //     _buildOriginDesign(),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildOriginDesign() {
+    return CustomNavigationBar(
+      iconSize: 30.0,
+      selectedColor: Colors.white,
+      strokeColor: Colors.white,
+      unSelectedColor: Color(0xff6c788a),
+      backgroundColor: Color(0xff040307),
+      items: [
+        CustomNavigationBarItem(
+          icon: Icons.home,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.shopping_cart,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.lightbulb_outline,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.search,
+        ),
+        CustomNavigationBarItem(
+          icon: Icons.account_circle,
+        ),
+      ],
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        switch (index) {
+          case 0:
+            break;
+          case 1:
+            break;
+          case 2:
+            break;
+          case 3:
+            break;
+          case 4:
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Page2()));
+            break;
+          default:
+        }
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+    );
+  }
+
   Widget _specialistsCardInfo(Part data) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
@@ -199,6 +297,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
               Image.memory(base64Decode(data.String_image),
                 height: 100, width: 100, fit: BoxFit.fitWidth )
               ,
+
               SizedBox(
                 width: 10.0,
               ),
@@ -208,7 +307,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                 children: <Widget>[
                   RichText(
                     text: TextSpan(
-                      text: data.name+'\n',
+                      text: data.name + '\n',
                       style: TextStyle(
                         color: Colors.blueAccent,
                         fontSize: 20,
@@ -255,7 +354,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
                     padding: const EdgeInsets.all(0.0),
                     child: Ink(
                       decoration: const BoxDecoration(
-                        gradient: purpleGradient ,
+                        gradient: purpleGradient,
                         borderRadius: BorderRadius.all(Radius.circular(80.0)),
                       ),
                       child: Container(
@@ -280,12 +379,14 @@ class _DevoirsPageState extends State<DevoirsPage> {
           Icon(
             Icons.settings,
             color: Colors.blueAccent ,
+
             size: 36,
           ),
         ],
       ),
     );
   }
+
   Widget getCategoryUI() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -310,7 +411,15 @@ class _DevoirsPageState extends State<DevoirsPage> {
                         style: linkStyle,
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            print('Jour click action');
+                            Future.delayed(const Duration(milliseconds: 5000), () {
+
+// Here you can write your code
+
+                              setState(() {
+                                asyncInitState();
+                                  });
+
+                            });                           TestInitState();
                           })
                   ],
                 ),
@@ -328,8 +437,17 @@ class _DevoirsPageState extends State<DevoirsPage> {
                         style: linkStyle,
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            print('Jour click action');
-                          })
+
+                            Future.delayed(const Duration(milliseconds: 5000), () {
+
+// Here you can write your code
+
+                              setState(() {
+                                asyncInitState();
+                              });
+
+                            });                  vuesInitState();
+                        })
                   ],
                 ),
               ),
@@ -337,7 +455,6 @@ class _DevoirsPageState extends State<DevoirsPage> {
               const SizedBox(
                 width: 40,
               ),
-
               RichText(
                 text: TextSpan(
                   style: TextStyle(fontSize: 15) ,
@@ -381,11 +498,52 @@ class DetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Text Over Image'),
+        title: Text(todo.name),
       ),
-      body:        Image.memory(base64Decode(todo.String_image),
-          height: 300, width: 300, fit: BoxFit.fitHeight )
+      body: _header(todo)
     );
   }
 
+  Widget _header(Part p) {
+    return Container(
+      child: Stack(
+        children: <Widget>[
+          Image.memory(base64Decode(p.String_image),
+              height: 1000, width: 2000, fit: BoxFit.fitWidth),
+          Container(
+            color: Colors.black45,
+          ),
+          SafeArea(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.contact_phone,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+
+                  },
+                ),
+                Text(
+                 p.name,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  p.tag_description,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 32.0),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
