@@ -19,15 +19,12 @@ import '../../Part.dart';
 import 'header.dart';
 import 'pitem.dart';
 
-class PartsDetails extends StatefulWidget {
-  final int idPart;
-  PartsDetails({Key key, @required this.idPart}) : super(key: key);
-
+class PartsAdd extends StatefulWidget {
   @override
-  _PartsDetailsState createState() => _PartsDetailsState();
+  _PartsAddState createState() => _PartsAddState();
 }
 
-class _PartsDetailsState extends State<PartsDetails> {
+class _PartsAddState extends State<PartsAdd> {
   int _currentIndex = 4;
 
   List<int> _badgeCounts = List<int>.generate(5, (index) => index);
@@ -192,7 +189,7 @@ class _PartsDetailsState extends State<PartsDetails> {
                   },
                 ),
                 Text(
-                  widget.idPart.toString(),
+                  "ADD PART",
                   style: TextStyle(
                     color: Colors.white,
                   ),
@@ -232,81 +229,61 @@ class _PartsDetailsState extends State<PartsDetails> {
     );
   }
 
-  Future<void> setPart(value) async {
-    List<dynamic> value = await getPart(widget.idPart);
-    print(value);
-    priceController.text = value[0]["Price"].toString();
-    referanceController.text = value[0]["refrence"];
-    nameController.text = value[0]["name"];
-    other1Controller.text = value[0]["other1"].split(',')[0];
-    content1Controller.text = value[0]["other1"].split(',')[1];
-    other2Controller.text = value[0]["other2"].split(',')[0];
-    content2Controller.text = value[0]["other2"].split(',')[1];
-    other3Controller.text = value[0]["other3"].split(',')[0];
-    content3Controller.text = value[0]["other3"].split(',')[1];
-    descriptionController.text = value[0]["tag_description"];
-    imageController.text = value[0]["String_image"];
-    categoryController.text = value[0]["Type"];
-    _value = categorys.indexOf(categoryController.text) + 1;
-    setState(() {});
-  }
-
   @override
   void initState() {
     super.initState();
-    setPart(widget.idPart);
     //_value = categorys.indexOf(categoryController.text) - 1;
-  }
-
-  static Future<dynamic> getPart(idpart) async {
-    print("get Part details");
-    String requestUrl = "http://192.168.1.4:5000/api/parts/getPartsId";
-    Map<String, String> headers = {"Content-type": "application/json"};
-    http.Response response = await http.post(
-      requestUrl,
-      headers: headers,
-      body: jsonEncode(<String, int>{
-        'idpart': idpart,
-      }),
-    );
-    List<dynamic> data = json.decode(response.body);
-    return data;
   }
 
   Widget _submitButton() {
     return InkWell(
       onTap: () async {
-        dynamic value = await updatePart(
-            widget.idPart,
-            referanceController.text,
-            categoryController.text,
-            descriptionController.text,
-            other1Controller.text,
-            other2Controller.text,
-            other3Controller.text,
-            content1Controller.text,
-            content2Controller.text,
-            content3Controller.text,
-            nameController.text,
-            imageController.text);
-        dynamic value2 = await updatePart2(
-          widget.idPart,
-          priceController.text,
-        );
-        print(value2);
-        if (jsonDecode(value)["succes"] == "part updated sucessfully") {
-          AwesomeDialog(
-            context: context,
-            animType: AnimType.LEFTSLIDE,
-            headerAnimationLoop: false,
-            dialogType: DialogType.SUCCES,
-            title: 'Succes',
-            desc: 'part updated',
-            btnOkOnPress: () {
-              debugPrint('OnClcik');
-            },
-            btnOkIcon: Icons.check_circle,
-          )..show();
+        if (priceController.text != "" &&
+            referanceController.text != "" &&
+            categoryController.text != "" &&
+            descriptionController.text != "" &&
+            nameController.text != "" &&
+            imageController.text != "") {
+          dynamic value = await addPart(
+              priceController.text,
+              referanceController.text,
+              categoryController.text,
+              descriptionController.text,
+              other1Controller.text,
+              other2Controller.text,
+              other3Controller.text,
+              content1Controller.text,
+              content2Controller.text,
+              content3Controller.text,
+              nameController.text,
+              imageController.text);
+          print(value);
+          if (jsonDecode(value)["success"] ==
+              "the Part has been added sucessfully") {
+            AwesomeDialog(
+              context: context,
+              animType: AnimType.LEFTSLIDE,
+              headerAnimationLoop: false,
+              dialogType: DialogType.SUCCES,
+              title: 'Succes',
+              desc:
+                  'part Added please go to your profile to put a price and activate it',
+              btnOkOnPress: () {
+                debugPrint('OnClcik');
+              },
+              btnOkIcon: Icons.check_circle,
+            )..show();
+          } else {
+            AwesomeDialog(
+                context: context,
+                dialogType: DialogType.WARNING,
+                headerAnimationLoop: false,
+                animType: AnimType.TOPSLIDE,
+                title: 'Warning',
+                desc: 'please verifie your data',
+                btnOkOnPress: () {})
+              ..show();
+          }
         } else {
           AwesomeDialog(
               context: context,
@@ -337,73 +314,7 @@ class _PartsDetailsState extends State<PartsDetails> {
                 end: Alignment.centerRight,
                 colors: [Color(0xff9ba1a6), Color(0xff3B3F42)])),
         child: Text(
-          'Save',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Future<String> apiRequest(idpart) async {
-    HttpClient httpClient = new HttpClient();
-    String requestUrl = "http://192.168.1.4:5000/api/parts/deletePart";
-    HttpClientRequest request =
-        await httpClient.deleteUrl(Uri.parse(requestUrl));
-    request.headers.set('content-type', 'application/json');
-    request.add(utf8.encode(json.encode({"deleteId": idpart})));
-
-    HttpClientResponse response = await request.close();
-    String statusCode = response.statusCode.toString();
-    String reply = await response.transform(utf8.decoder).join();
-
-    print(statusCode);
-
-    httpClient.close();
-    return reply;
-  }
-
-  Widget _deleteButton() {
-    return InkWell(
-      onTap: () async {
-        dynamic value = await apiRequest(
-          widget.idPart,
-        );
-
-        if (jsonDecode(value)["sucess"] ==
-            "the Part has been deleted sucessfully") {
-          AwesomeDialog(
-            context: context,
-            animType: AnimType.LEFTSLIDE,
-            headerAnimationLoop: false,
-            dialogType: DialogType.SUCCES,
-            title: 'Succes',
-            desc: 'part deleted',
-            btnOkOnPress: () {
-              debugPrint('OnClcik');
-            },
-            btnOkIcon: Icons.check_circle,
-          )..show();
-        }
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 10),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Colors.red[300], Colors.red[600]])),
-        child: Text(
-          'Delete',
+          'Add',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
@@ -441,39 +352,24 @@ class _PartsDetailsState extends State<PartsDetails> {
     );
   }
 
-  static Future<String> updatePart(idpart, refrence, type, description, other1,
+  static Future<String> addPart(price, refrence, type, description, other1,
       other2, other3, content1, content2, content3, name, imagey) async {
-    print("update part");
-    String requestUrl = "http://192.168.1.4:5000/api/parts/updatePart";
+    print("add part");
+    String requestUrl = "http://192.168.1.4:5000/api/parts/add";
     Map<String, String> headers = {"Content-type": "application/json"};
-    http.Response response = await http.put(
+    http.Response response = await http.post(
       requestUrl,
       headers: headers,
       body: jsonEncode(<String, String>{
-        "idparts": idpart.toString(),
+        "username": "jawhergharbi@yahoo.fr",
+        "name": name,
         "refrence": refrence,
         "Type": type,
         "tag_description": description,
         "other1": other1 + "," + content1,
         "other2": other2 + "," + content2,
-        "other3": other3 + "," + content2,
-        "name": name,
-        "String_image": imagey
-      }),
-    );
-    return response.body;
-  }
-
-  static Future<String> updatePart2(idpart, price) async {
-    print("update part");
-    String requestUrl = "http://192.168.1.4:5000/api/parts/addSell";
-    Map<String, String> headers = {"Content-type": "application/json"};
-    http.Response response = await http.put(
-      requestUrl,
-      headers: headers,
-      body: jsonEncode(<String, String>{
-        "idparts": idpart.toString(),
-        "price": price,
+        "other3": other3 + "," + content3,
+        "String_image": imagey,
       }),
     );
     return response.body;
@@ -521,7 +417,7 @@ class _PartsDetailsState extends State<PartsDetails> {
                         children: <Widget>[
                           Text("pick a picture"),
                           _takePicture(),
-                          _entryField("price", priceController),
+                          _entryField("price*", priceController),
                         ],
                       ),
                     ),
@@ -541,10 +437,10 @@ class _PartsDetailsState extends State<PartsDetails> {
                       ),
                       child: Column(
                         children: <Widget>[
-                          Text('UPDATE INFO'),
-                          _entryField("Name", nameController),
-                          _entryField("Referance", referanceController),
-                          Text("current applied category: " +
+                          Text('ADD INFO'),
+                          _entryField("Name*", nameController),
+                          _entryField("Referance*", referanceController),
+                          Text("current applied category:* " +
                               categoryController.text),
                           Container(
                             padding: EdgeInsets.all(20.0),
@@ -600,7 +496,7 @@ class _PartsDetailsState extends State<PartsDetails> {
                           _entryField("Content ", content2Controller),
                           _entryField("Label ", other3Controller),
                           _entryField("Content ", content3Controller),
-                          _entryField("Descrtiption ", descriptionController),
+                          _entryField("Descrtiption* ", descriptionController),
                           Container(
                             margin: const EdgeInsets.all(10.0),
                             padding: const EdgeInsets.all(10.0),
@@ -618,7 +514,6 @@ class _PartsDetailsState extends State<PartsDetails> {
                             child: Column(
                               children: <Widget>[
                                 _submitButton(),
-                                _deleteButton(),
                               ],
                             ),
                           ),

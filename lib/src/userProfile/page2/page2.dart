@@ -6,10 +6,13 @@ import 'package:flutter_login_signup/src/Homepage/custome_navigation_bar.dart';
 import 'package:flutter_login_signup/src/Parts/Devoirs/Devoirs.dart';
 import 'package:flutter_login_signup/src/navBar.dart';
 import 'package:flutter_login_signup/src/userProfile/page2/part_view.dart';
+import 'package:flutter_login_signup/src/userProfile/page2/partsAdd.dart';
 import 'package:flutter_login_signup/src/userProfile/page2/partsDetails.dart';
 import 'package:flutter_login_signup/src/userProfile/page2/parts_feeder.dart';
 import 'package:flutter_login_signup/src/userProfile/page2/part.dart';
+import 'package:flutter_login_signup/src/userProfile/page2/profileEdit.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'header.dart';
 import 'pitem.dart';
 
@@ -25,6 +28,10 @@ class _Page2State extends State<Page2> {
   List<int> _badgeCounts = List<int>.generate(5, (index) => index);
 
   List<bool> _badgeShows = List<bool>.generate(5, (index) => true);
+  TextEditingController firstNameController = new TextEditingController();
+  TextEditingController lastNameController = new TextEditingController();
+  TextEditingController emailController = new TextEditingController();
+
   bool isLoading = true;
   void assin() async {
     List<dynamic> value = await PartsFeeder.getParts();
@@ -46,6 +53,7 @@ class _Page2State extends State<Page2> {
   void initState() {
     super.initState();
     assin();
+    setData();
   }
 
   Widget _buildOriginDesign() {
@@ -98,6 +106,81 @@ class _Page2State extends State<Page2> {
     );
   }
 
+  Widget _profile() {
+    return Row(
+      children: <Widget>[
+        CircleAvatar(
+          backgroundImage: NetworkImage("https://i.pravatar.cc/300"),
+        ),
+        SizedBox(width: 12.0),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              firstNameController.text + " " + lastNameController.text,
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              emailController.text,
+              style: TextStyle(
+                fontSize: 12.0,
+                color: Colors.black38,
+              ),
+            ),
+          ],
+        ),
+        Spacer(),
+        FlatButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          color: Color(0xff9ba1a6),
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: EdgeInsets.all(0.0),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => EditPage()));
+          },
+          child: Text(
+            "Edit",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Future<dynamic> getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    String stringValue = prefs.getString('username');
+    print(stringValue);
+    print("get User details");
+    String requestUrl = "http://192.168.1.4:5000/api/getUser";
+    Map<String, String> headers = {"Content-type": "application/json"};
+    http.Response response = await http.post(
+      requestUrl,
+      headers: headers,
+      body: jsonEncode(<String, String>{
+        'username': stringValue,
+      }),
+    );
+    return json.decode(response.body);
+  }
+
+  Future<dynamic> setData() async {
+    dynamic value = await getUser();
+    firstNameController.text = value[0]["firstname"];
+    lastNameController.text = value[0]["lastname"];
+    emailController.text = value[0]["username"];
+    print(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,7 +218,7 @@ class _Page2State extends State<Page2> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          PItem(),
+                          _profile(),
                           SizedBox(height: 32.0),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -148,7 +231,12 @@ class _Page2State extends State<Page2> {
                                 materialTapTargetSize:
                                     MaterialTapTargetSize.shrinkWrap,
                                 padding: EdgeInsets.all(0.0),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => PartsAdd()));
+                                },
                                 child: Text(
                                   "Add Parts",
                                   style: TextStyle(
