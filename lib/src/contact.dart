@@ -236,9 +236,21 @@ class _ContactState extends State<Contact> {
     //_value = categorys.indexOf(categoryController.text) - 1;
   }
 
-  Widget _submitButton() {
+  Widget _chatButton() {
     return InkWell(
-      onTap: () async {},
+      onTap: () {
+        AwesomeDialog(
+          context: context,
+          width: 280,
+          buttonsBorderRadius: BorderRadius.all(Radius.circular(2)),
+          headerAnimationLoop: false,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'INFO',
+          desc: 'you will start a chat with the seller now',
+          btnCancelOnPress: () {},
+          btnOkOnPress: () {},
+        )..show();
+      },
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -266,7 +278,19 @@ class _ContactState extends State<Contact> {
 
   Widget _phoneButton() {
     return InkWell(
-      onTap: () async {},
+      onTap: () async {
+        AwesomeDialog(
+          context: context,
+          width: 280,
+          buttonsBorderRadius: BorderRadius.all(Radius.circular(2)),
+          headerAnimationLoop: false,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'INFO',
+          desc: 'seller phone number : ',
+          btnCancelOnPress: () {},
+          btnOkOnPress: () {},
+        )..show();
+      },
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -292,9 +316,21 @@ class _ContactState extends State<Contact> {
     );
   }
 
-  Widget _deleteButton() {
+  Widget _emailButton() {
     return InkWell(
-      onTap: () async {},
+      onTap: () {
+        AwesomeDialog(
+          context: context,
+          width: 280,
+          buttonsBorderRadius: BorderRadius.all(Radius.circular(2)),
+          headerAnimationLoop: false,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'INFO',
+          desc: 'seller phone email : ',
+          btnCancelOnPress: () {},
+          btnOkOnPress: () {},
+        )..show();
+      },
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 10),
@@ -315,37 +351,6 @@ class _ContactState extends State<Contact> {
         child: Text(
           'email',
           style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _takePicture() {
-    return GestureDetector(
-      onTap: () {
-        _showPicker(context);
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width / 7,
-        height: MediaQuery.of(context).size.height / 13,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.shade200,
-                  offset: Offset(2, 4),
-                  blurRadius: 5,
-                  spreadRadius: 2)
-            ],
-            gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Colors.white, Colors.white])),
-        child: Icon(
-          Icons.image,
-          color: Colors.grey,
-          size: 50.0,
         ),
       ),
     );
@@ -425,8 +430,8 @@ class _ContactState extends State<Contact> {
                             ),
                             child: Column(
                               children: <Widget>[
-                                _submitButton(),
-                                _deleteButton(),
+                                _chatButton(),
+                                _emailButton(),
                                 _phoneButton(),
                               ],
                             ),
