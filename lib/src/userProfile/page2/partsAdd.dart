@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_signup/src/Homepage/custom_navigation_bar.dart';
 import 'package:flutter_login_signup/src/Homepage/custome_navigation_bar.dart';

@@ -215,7 +215,7 @@ class _DevoirsPageState extends State<DevoirsPage> {
               width: 50.0,
               height: 30.0,
             ),
-       //     _buildOriginDesign(),
+           _buildOriginDesign(),
           ],
         ),
       ),
