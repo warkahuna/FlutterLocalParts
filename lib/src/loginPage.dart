@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_signup/src/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'Parts/Devoirs/Devoirs.dart';
 import 'Widget/bezierContainer.dart';
@@ -71,8 +72,8 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () {
         loginUser(emailController.text, passwordController.text)
             .then((value) => verifieAndGoHome(value));
-        Navigator.push(context, MaterialPageRoute(builder: (context) => DevoirsPage()));
-
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => DevoirsPage()));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -319,7 +320,7 @@ class _LoginPageState extends State<LoginPage> {
 
   static Future<String> loginUser(username, password) async {
     print("login");
-    String requestUrl = "http://192.168.1.5:5000/api/login";
+    String requestUrl = "http://192.168.1.4:5000/api/login";
     Map<String, String> headers = {"Content-type": "application/json"};
     http.Response response = await http.post(
       requestUrl,
@@ -336,10 +337,14 @@ class _LoginPageState extends State<LoginPage> {
     print(value);
     if (jsonDecode(value)['message'] == "JSON Data received successfully") {
       print("welcome");
+      addStringToSF();
     }
-
   }
 
+  addStringToSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('username', emailController.text);
+  }
 }
 
 class User {
